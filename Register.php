@@ -3,30 +3,76 @@
 include_once 'ui/connectdb.php';
 session_start();
 
-
+//registration
 if(isset($_POST['btn_register'])){
 
     $Name = $_POST['txt_name'];
     $email = $_POST['txt_email'];
+    $age = $_POST['txt_age'];
+    $address = $_POST['txt_address'];
     $password = $_POST['txt_password'];
     $Gender = $_POST['txtselect_option'];
 
-    $insert = $pdo->prepare("INSERT into register_tbl (Name, email, password, Gender) VALUES (:Name, :email, :password, :Gender)");
+    //checking email
+    if(isset($_POST['txt_email'])){
 
-    $insert->bindParam(':Name', $Name);
-    $insert->bindParam(':email', $email);
-    $insert->bindParam(':password', $password);
-    $insert->bindParam(':Gender', $Gender);
+      $select = $pdo->prepare ("select email from register_tbl where email='$email'");
+  
+      $select->execute();
+  
+      if($select->rowCount()>0){
+  
+        $_SESSION['status'] = "Email already exists";
+        $_SESSION['status_code'] = "warning";
+  
+        }else{
+          $_SESSION['status'] = "New user has been added successfully";
+          $_SESSION['status_code'] = "success";
+
+          //password checking
+          if($_POST['txt_password']){
+
+            $select = $pdo->prepare ("select password from register_tbl where password='$password'");
+        
+            $select->execute();
+        
+      }if($select->rowCount()>0){
+        
+        $_SESSION['status_code'] = "warning";
+        $_SESSION['status'] = "Password already exists";
+
+    }else{          
+
+      //Adding credentials to the database
+      $insert = $pdo->prepare("INSERT into register_tbl (Name, email, Age, Address, password, Gender) VALUES (:Name, :email, :Age, :Address, :password, :Gender)");
+
+      $insert->bindParam(':Name', $Name);
+      $insert->bindParam(':email', $email);
+      $insert->bindParam(':Age', $age);
+      $insert->bindParam(':Address', $address);
+      $insert->bindParam(':password', $password);
+      $insert->bindParam(':Gender', $Gender);
 
     if ($insert->execute()) {
+
         $_SESSION['status'] = "New user has been added successfully";
         $_SESSION['status_code'] = "success";
-    } else {
+
+          while($_SESSION['Name'] ==''){
+
+            header('location:index.php');
+          
+          }
+    } else  {
+
         $_SESSION['status'] = "Error in adding new user";
         $_SESSION['status_code'] = "error";
+
     }
 }
-
+}
+}
+}
 ?>
 
 
@@ -45,7 +91,6 @@ if(isset($_POST['btn_register'])){
   <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-  
   <!-- Toastr -->
   <link rel="stylesheet" href="plugins/toastr/toastr.min.css">
   <!-- Theme style -->
@@ -74,6 +119,24 @@ if(isset($_POST['btn_register'])){
 
         <div class="input-group mb-3">
           <input type="email" class="form-control" placeholder="Email" name="txt_email" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Age" name="txt_age" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Address" name="txt_address" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -114,11 +177,16 @@ if(isset($_POST['btn_register'])){
 
             </div>
           </div>
+
           <!-- /.col -->
+          <div class="col-8">
+            <div class="icheck-primary">
+              <a href="index.php">Already have an account?</a>
+            </div>
+          </div>
+
           <div class="col-4"> 
-
             <button type="submit" class="btn btn-primary btn-block" name="btn_register">Register</button>
-
           </div>
 
           <!-- /.col -->
@@ -140,7 +208,6 @@ if(isset($_POST['btn_register'])){
 <script src="plugins/toastr/toastr.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
