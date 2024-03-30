@@ -41,6 +41,7 @@ session_start();
 
           if($newpassword_txt==$rnewpassword_txt){
 
+            
             $update=$pdo->prepare("update tbl_user set password=:pass where user_email=:email");
 
             $update->bindParam(':pass',$rnewpassword_txt);
@@ -109,7 +110,7 @@ session_start();
            <!-- Horizontal Form -->
            <div class="card card-info">
               <div class="card-header">
-                <h3 class="card-title">Change Password</h3>
+                <h3 class="card-title">Create your new password</h3>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
@@ -136,7 +137,7 @@ session_start();
                       <input type="password" class="form-control" id="inputPassword3" placeholder="Repeat New Password" name="txt_rnewpassword">
                     </div>
                   </div>
-
+htm
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
