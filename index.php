@@ -46,16 +46,16 @@
         $_SESSION['user_email']=$row['user_email'];
         $_SESSION['role']=$row['role'];
 
-      }
         
     }else{
 
       $_SESSION['status']="Invalid Email or Password";
-      $_SESSION['status_code']="warning";
+      $_SESSION['status_code']="error";
 
     }
 
   }
+}
 
 
 ?>
@@ -86,6 +86,7 @@
 </head>
 
 <body class="hold-transition login-page">
+
 <div class="login-box">
 
   <!-- /.login-logo -->
@@ -119,9 +120,10 @@
           </div>
         </div>
         <div class="row">
+          
         <div class="col-8">
           <div class="icheck-primary">
-             <a href="register.php">Don't have an account? Sign up here!</a>
+             <a href="register.php">Don't have an account?</a>
           </div>
         </div>
 
@@ -147,6 +149,18 @@
   <!-- /.card -->
 
 </div>
+
+<style>
+
+  .hold-transition login-page{
+    background-image: url("Erica Anderson.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+</style>
+
 
 </body>
 </html>
