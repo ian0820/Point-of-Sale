@@ -28,10 +28,12 @@ error_reporting(0);
     $delete=$pdo->prepare("delete from tbl_user where userid =".$id);
 
     if($delete->execute()){
+
       $_SESSION['status']="Account deleted successfully";
       $_SESSION['status_code']="success";
 
     }else{
+      
       $_SESSION['status']="Account deletion failed";
       $_SESSION['status_code']="warning";
 
@@ -139,7 +141,7 @@ if(isset($_POST['btnsave'])){
 
           <div class="card card-primary card-outline">
               <div class="card-header">
-                <h5 class="m-0">Registration</h5>
+                <h5 class="m-0">Registration Form</h5>
               </div>
               <div class="card-body">
 
