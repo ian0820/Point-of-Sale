@@ -39,23 +39,25 @@ include_once "header.php";
               </div>
               <div class="card-body">
                 
-              <table class="table table-hover" id="table_product">
+              <table class="table table-striped table-hover" id="table_product">
     <thead>
       
         <tr>
           <td><b>Barcode</b></td>
           <td><b>Product</b></td>
-          <td><b>category</b></td>
+          <td><b>Category</b></td>
+          <td><b>Supplier</b></td>
           <td><b>Description</b></td>
           <td><b>Stock</b></td>
           <td><b>Purchase Price</b></td>
           <td><b>Product Price</b></td>
           <td><b>Image</b></td>
           <td><b>Action Buttons</b></td>
-
         </tr>
 
-  
+        </thead>
+
+        <tbody>
         
         <?php
           $select = $pdo->prepare("select * from tbl_product order by pID ASC");
@@ -68,6 +70,7 @@ include_once "header.php";
               <td>'.$row->Barcode.'</td>
               <td>'.$row->Product.'</td>
               <td>'.$row->Category.'</td>
+              <td>'.$row->Category.'</td>
               <td>'.$row->Description.'</td>
               <td>'.$row->Stock.'</td>
               <td>'.$row->PurchasePrice.'</td>
@@ -79,13 +82,13 @@ include_once "header.php";
 
                 <div class="btn-group">
 
-                <a href="printbarcode.php?id"='.$row->pID.'" class="btn btn-primary btn-xs role="button"><span class="fa fa-barcode" style="color:#ffffff" data-toggle="tooltip" title="Print Barcode"></span></a>  
+                <a href="printbarcode.php?id='.$row->pID.'" class="btn btn-primary btn-xs role="button"><span class="fa fa-barcode" style="color:#ffffff" data-toggle="tooltip" title="Print Barcode"></span></a>  
 
-                <a href="viewproduct.php?id"='.$row->pID.'" class="btn btn-warning btn-xs role="button"><span class="fa fa-eye"  style="color:#ffffff" data-toggle="tooltip" title="View Product"></span></a>  
+                <a href="viewproduct.php?id='.$row->pID.'" class="btn btn-warning btn-xs role="button"><span class="fa fa-eye"  style="color:#ffffff" data-toggle="tooltip" title="View Product"></span></a>  
 
-                <a href="editproduct.php?id"='.$row->pID.'" class="btn btn-success btn-xs role="button"><span class="fa fa-edit" style="color:#ffffff" data-toggle="tooltip" title="Edit Product"></span></a>  
-
-                <button id='.$row->pID.'" class="btn btn-danger btn-xs"><span class="fa fa-trash" style="color:#ffffff" data-toggle="tooltip" title="Delete Product"></span></button>
+                <a href="editproduct.php?id='.$row->pID.'" class="btn btn-success btn-xs role="button"><span class="fa fa-edit" style="color:#ffffff" data-toggle="tooltip" title="Edit Product"></span></a>  
+            
+                <button id='.$row->pID.' class="btn btn-danger btn-xs"><span class="fa fa-trash" style="color:#ffffff" data-toggle="tooltip" title="Delete Product"></span></button>
 
                 </div>
 
@@ -99,14 +102,13 @@ include_once "header.php";
 
 
         ?>
-        <tbody>
+
 
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
       </tbody>
       
-    </thead>
   </table>
               </div>
             </div>
