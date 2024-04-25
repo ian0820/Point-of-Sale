@@ -70,27 +70,29 @@ if (isset($_POST['btnupdate'])) {
 }
 
 //delete button
-if(isset($_POST['btndelete'])){
+error_reporting(0);
 
-    $delete=$pdo->prepare("delete from tbl_category where catid=".$_POST['btndelete']);
+$id=$_GET['id'];
 
-        if ($delete->execute()){
+if(isset($id)){
 
-            $_SESSION['status']="Category deleted successfully";
-                $_SESSION['status_code']="success";
-            
-        }else{
+    $delete=$pdo->prepare("delete from tbl_category where catid=".$id);
+      
+              if ($delete->execute()){
+      
+                  $_SESSION['status']="Category deleted successfully";
+                      $_SESSION['status_code']="success";
 
-            $_SESSION['status']="Category deletion failed";
-            $_SESSION['status_code']="warning";
+                  }else{
+      
+                  $_SESSION['status']="Category deletion failed";
+                  $_SESSION['status_code']="warning";
 
-
-        }
-
-
+                  }
 }else{
 
-
+  $_SESSION['status']="Category deletion failed";
+  $_SESSION['status_code']="warning";
 
 }
 
@@ -193,12 +195,14 @@ if(isset($_POST['btndelete'])){
       
         <tr>
           <td><b>No.</b></td>
-          <td><b>Category</b></td>
+          <td><b>Category</b></td>  
           <td><b>Edit</b></td>
           <td><b>Delete</b></td>
         </tr>
 
     </thead>
+
+  
         
         <?php
 
@@ -220,7 +224,8 @@ if(isset($_POST['btndelete'])){
 
               <td>
               
-              <button type="submit" class="btn btn-danger" value="'.$row->catid.'" name="btndelete">Delete</button>
+              <a href="category.php?id='.$row->catid.'" class="btn btn-danger delete-btn" data-id="'.$row->catid.'" name= "btndelete"><i class="fa fa-trash-alt"></i></a></td>
+
 
               </td>
 
@@ -236,18 +241,7 @@ if(isset($_POST['btndelete'])){
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-      </tbody>
-
-      <tfoot>
-
-        <tr>
-          <td><b>No.</b></td>
-          <td><b>Category</b></td>
-          <td><b>Edit</b></td>
-          <td><b>Delete</b></td>
-        </tr>
-
-      </tfoot>
+        </tbody>
       
   </table>
 
@@ -306,7 +300,7 @@ include_once "footer.php";
           confirmButtonText: 'Delete'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = 'registration.php?id=' + userId;
+            window.location.href = 'category.php?id=' + userId;
           }
         });
       });
