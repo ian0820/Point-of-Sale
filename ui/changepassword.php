@@ -137,7 +137,7 @@ session_start();
                       <input type="password" class="form-control" id="inputPassword3" placeholder="Repeat New Password" name="txt_rnewpassword">
                     </div>
                   </div>
-htm
+                  
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
