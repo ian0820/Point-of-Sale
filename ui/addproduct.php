@@ -6,6 +6,7 @@ session_start();
 include_once "header.php";
 
 
+
 if (isset($_POST['btnsave'])){
 
   $barcode=$_POST['txtbarcode'];
@@ -220,6 +221,34 @@ if (isset($_POST['btnsave'])){
         <div class="form-group">
             <label>Product Price</label>
             <input type="number" min="1" step="any" class="form-control" placeholder="Enter Product Price" name="txtSalePrice" required>
+        </div>
+
+        <!-- added category -->
+        <div class="form-group">
+            <label>Supplier</label>
+            <select class="form-control" name="txtselect_option">
+              <option value="" disabled selected>Select Supplier</option>
+
+                  <?php
+
+                  $select=$pdo->prepare("select * from tbl_catsupplier order by CategoryID desc");
+                  $select->execute();
+
+                  while($row=$select->fetch(PDO::FETCH_ASSOC)){
+
+                    extract($row);
+
+                  ?>
+                  
+                  <option><?php echo $row['CatSupplier'];?></option>
+
+                  <?php
+
+                  }
+
+                  ?>
+
+            </select>
         </div>
 
         <div class="form-group">
