@@ -21,25 +21,32 @@ if($_SESSION['role']=="Admin"){
 
 error_reporting(0);
 
-  $id=$_GET['id'];
+$id=$_GET['id'];
 
-    if(isset($id)){
+if(isset($id)){
 
-    $delete=$pdo->prepare("delete from tbl_user where userid =".$id);
-
-    if($delete->execute()){
-
-      $_SESSION['status']="Account deleted successfully";
-      $_SESSION['status_code']="success";
-
-    }else{
+    $delete=$pdo->prepare("delete from tbl_user where userid=".$id);
       
-      $_SESSION['status']="Account deletion failed";
-      $_SESSION['status_code']="warning";
+              if ($delete->execute()){
+      
+                  $_SESSION['status']="Account deleted successfully";
+                      $_SESSION['status_code']="success";
+                  
+              }else{
+      
+                  $_SESSION['status']="Account deletion failed";
+                  $_SESSION['status_code']="warning";
+      
+      
+              }
+}else{
 
- }
+  $_SESSION['status_code']="warning";
+  $_SESSION['status']="Account deletion failed";
+
 }
 
+        
 
 
 if(isset($_POST['btnsave'])){
@@ -104,13 +111,17 @@ if(isset($_POST['btnsave'])){
             $_SESSION['status'] = "Error in adding new user";
             $_SESSION['status_code'] = "error";
         }
+    
+            
       }
     }
   }
 
   }
+
 }
 }
+
 
 
 ?>
@@ -205,8 +216,9 @@ if(isset($_POST['btnsave'])){
 
 
 <div class="col-md-8">
+  
 
-  <table class="table table-hover">
+  <table class="table table-striped table-hover">
     <thead>
       
         <tr>
@@ -218,10 +230,11 @@ if(isset($_POST['btnsave'])){
           <td><b>Contact</b></td>
           <td><b>Password</b></td>
           <td><b>Role</b></td>
+          <td><b>Edit</b></td>
           <td><b>Delete</b></td>
         </tr>
 
-  
+  </thead>
         
         <?php
           $select = $pdo->prepare("select * from tbl_user order by userid ASC");
@@ -239,9 +252,17 @@ if(isset($_POST['btnsave'])){
               <td>'.$row->contact.'</td>
               <td>'.$row->password.'</td>
               <td>'.$row->role.'</td>
+      
               <td>
               
-                <a href="registration.php?id='.$row->userid.'" class="btn btn-danger delete-btn" data-id="'.$row->userid.'"><i class="fa fa-trash-alt"></i></a></td>
+              <a href="editregistration.php"><button type="submit" class="btn btn-primary" value="'.$row->userid.'" name="btnedit">Edit</button></a>
+
+              </td>  
+              
+
+              <td>
+              
+                <a href="registration.php?id='.$row->userid.'" class="btn btn-danger delete-btn" data-id="'.$row->userid.'" name= "btndelete"><i class="fa fa-trash-alt"></i></a></td>
 
               </td>
 
@@ -261,7 +282,7 @@ if(isset($_POST['btnsave'])){
 
       </tbody>
       
-    </thead>
+    
   </table>
 
 
@@ -296,36 +317,37 @@ include_once "footer.php";
 
 ?>
 
-  <script>
+<script>
 
-        swal.fire({
-          icon: '<?php echo $_SESSION['status_code'];?>',
-          title: '<?php echo $_SESSION['status'];?>'
-        });
-
-        $(document).ready(function() {
-          $('.delete-btn').click(function(e) {
-          e.preventDefault();
-
-        var userId = $(this).data('id');
-
-        Swal.fire({
-          title: 'Are you sure?',
-          text: 'This action cannot be undone',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d63032',
-          confirmButtonText: 'Delete'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = 'registration.php?id=' + userId;
-          }
-        });
-      });
+    swal.fire({
+      icon: '<?php echo $_SESSION['status_code'];?>',
+      title: '<?php echo $_SESSION['status'];?>'
     });
 
-  </script>
+    $(document).ready(function() {
+    $('.delete-btn').click(function(e) {
+    e.preventDefault();
+
+    var userId = $(this).data('id');
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d63032',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = 'registration.php?id=' + userId;
+      }
+    });
+    });
+    });
+
+</script>
+
 
 
 
