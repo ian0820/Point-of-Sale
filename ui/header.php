@@ -14,6 +14,11 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="../dist/css/adminlte.min.css">
 
+    <!-- DataTables -->
+    <link rel="stylesheet" href="../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+
 
 
 </head>
@@ -69,7 +74,7 @@
           <a href="#" class="dropdown-item">
             <!-- Message Start -->
             <div class="media">
-              <img src="../dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+              <img src="ui/Untitled.png" alt="User Avatar" class="img-size-50 mr-3 img-circle">
               <div class="media-body">
                 <h3 class="dropdown-item-title">
                   Brad Diesel
@@ -85,7 +90,7 @@
           <a href="#" class="dropdown-item">
             <!-- Message Start -->
             <div class="media">
-              <img src="../dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <img src="ui/Untitled.png" alt="User Avatar" class="img-size-50 img-circle mr-3">
               <div class="media-body">
                 <h3 class="dropdown-item-title">
                   John Pierce
@@ -101,7 +106,7 @@
           <a href="#" class="dropdown-item">
             <!-- Message Start -->
             <div class="media">
-              <img src="../dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <img src="ui/Untitled.png" alt="User Avatar" class="img-size-50 img-circle mr-3">
               <div class="media-body">
                 <h3 class="dropdown-item-title">
                   Nora Silvester
@@ -171,7 +176,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="ui/Untitled.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="#" class="d-block"><?php echo $_SESSION['username']; ?></a>
@@ -206,7 +211,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="category.php" class="nav-link">
             <i class="nav-icon fas fa-table"></i>
               <p>
                 Category
@@ -215,10 +220,28 @@
           </li>
 
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="SupplierCategory.php" class="nav-link">
+            <i class="nav-icon fas fa-table"></i>
+              <p>
+                Supplier
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="addproduct.php" class="nav-link">
             <i class="nav-icon fas fa-edit"></i>
               <p>
                 Product
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="productlist.php" class="nav-link">
+            <i class="nav-icon fas fa-list"></i>
+              <p>
+                Product List
               </p>
             </a>
           </li>
