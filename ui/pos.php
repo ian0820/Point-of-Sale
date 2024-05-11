@@ -134,8 +134,6 @@ th {background: #eee;}
 
 
 
-                  
-
                 </table>
 
           </div>
@@ -226,7 +224,7 @@ th {background: #eee;}
                   </div>
                 </div> 
 
-                <hr style="height: 2px; border-width: 0; color: black; background-color: black;">
+                <hr style="height: 1px; border-width: 0; color: black; background-color: black;">
 
                 <div class="input-group">
                 <div class="input-group-prepend">
@@ -238,7 +236,7 @@ th {background: #eee;}
                   </div>
                 </div>
 
-                <hr style="height: 2px; border-width: 0; color: black; background-color: black;">
+                <hr style="height: 1px; border-width: 0; color: black; background-color: black;">
 
                 <div class="form-group clearfix">
                       <div class="icheck-success d-inline">
@@ -260,7 +258,7 @@ th {background: #eee;}
                         </label>
                       </div>
               
-                <hr style="height: 2px; border-width: 0; color: black; background-color: black;">
+                <hr style="height: 1px; border-width: 0; color: black; background-color: black;">
 
                 <div class="input-group">
                 <div class="input-group-prepend">
@@ -284,7 +282,7 @@ th {background: #eee;}
                   </div>
                 </div>
 
-                <hr style="height: 2px; border-width: 0; color: black; background-color: black;">
+                <hr style="height: 1px; border-width: 0; color: black; background-color: black;">
 
                 <div class="card-footer">
 
@@ -343,11 +341,11 @@ include_once"footer.php";
     data: {id:barcode},
     success: function(data){
 
-      //alert("pID");
+      alert("pID");
 
-      //console.log(data);
+      console.log(data);
 
-      if(Jquery.inArray(data["pID"], productarr)!== -1){
+      if(jQuery.inArray(data["pID"], productarr)!== -1){
 
         var actualqty = parseInt($('#qty_id'+data["pID"]).val())+1;
         $('#qty_id'+data["pID"].val(actualqty));
@@ -360,6 +358,8 @@ include_once"footer.php";
         $('#saleprice_idd'+data["pID"]).val(saleprice);
 
         $("#txtbarcode_id").val("");
+
+        calculate();
 
 
       }else{
@@ -391,9 +391,7 @@ include_once"footer.php";
 
           $('.details').append(tr);
 
-
-          //uncomment if this line is essential for this part
-          // calculate();
+          calculate();
 
 
         }//end f function addrow
@@ -445,7 +443,7 @@ $(function(){
 
         $("#taxtbarcode_id").val("");
 
-
+        calculate();
 
       }else{
 
@@ -495,25 +493,25 @@ $(function(){
 }); // end of main function
 
 
-$("#itemtable").dalegate(".qty" ,"keyup change", function(){
+$("#itemtable").delegate(".qty","keyup change", function(){
 
-var quantity = $(this);
+var quantity=$(this);
 var tr = $(this).parent().parent();
 
 if((quantity.val()-0)>(tr.find(".stock_c").val()-0)){
 
-  swal.fire("WARNING", "Sorry! This much quantity is not available", "warning");
-  quantity.val(1);
+Swal.fire("WARNING!", "SORRY!  This Much of Quantity is Not Available", "warning");
+quantity.val(1);
 
-  tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
+tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
 
-  tr.find(".saleprice").value(quantity.val() * tr.find(".price").text());
+tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
 
 }else{
 
   tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
 
-  tr.find(".saleprice").value(quantity.val() * tr.find(".price").text());
+tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
 
 }
 
