@@ -5,6 +5,8 @@ session_start();
 
 include_once "header.php";
 
+include 'barcode/barcode128.php';
+
 ?>
 
 <!-- Content Wrapper. Contains page content -->
@@ -66,13 +68,23 @@ include_once "header.php";
 
                </center>
 
-                   <li class="list-group-item">Barcode: <span class="badge badge-info float-right">'.$row->pID.'</span></li>
-                   <li class="list-group-item">Product: <span class="badge badge-warning float-right">'.$row->Product.'</span></li>
-                   <li class="list-group-item">Category: <span class="badge badge-success float-right">'.$row->Category.'</span></li>
-                   <li class="list-group-item">Description: <span class="badge badge-primary float-right">'.$row->Description.'</span></li>
-                   <li class="list-group-item">Stock: <span class="badge badge-danger float-right">'.$row->Stock.'</span></li>
-                   <li class="list-group-item">PurchasePrice: <span class="badge badge-secondry float-right">'.$row->PurchasePrice.'</span></li>
-                   <li class="list-group-item">ProductPrice: <span class="badge badge-dark float-right">'.$row->ProductPrice.'</span></li>
+                   <li class="list-group-item"><b>Barcode: </b><span class="badge badge-light float-right">'.bar128($row->Barcode).'</span></li>
+                    
+                   <li class="list-group-item"><b>Product: </b><span class="badge badge-warning float-right">'.$row->Product.'</span></li>
+
+                   <li class="list-group-item"><b>Category: </b><span class="badge badge-success float-right">'.$row->Category.'</span></li>
+
+                   <li class="list-group-item"><b>Description: </b><span class="badge badge-primary float-right">'.$row->Description.'</span></li>
+                   
+                   <li class="list-group-item"><b>Stock: </b><span class="badge badge-danger float-right">'.$row->Stock.'</span></li>
+
+                   <li class="list-group-item"><b>Purchase Price: </b><span class="badge badge-secondary float-right">'.$row->PurchasePrice.'</span></li>
+
+                   <li class="list-group-item"> <b>Product Price: </b><span class="badge badge-dark float-right">'.$row->ProductPrice.'</span></li>
+
+                   <li class="list-group-item"><b>Product profit: </b><span class="badge badge-dark float-right">'.($row->ProductPrice - $row->PurchasePrice).'</span></li>
+
+
                </ul>
                
 
@@ -88,9 +100,8 @@ include_once "header.php";
 
                </center>
 
-                   <li class="list-group-item">New <span class="badge">12</span></li>
-                   <li class="list-group-item">Deleted <span class="badge">5</span></li>
-                   <li class="list-group-item">Warnings <span class="badge">3</span></li>
+                 <img src="productimages/'.$row->Image.'" class="img-responsive"/>
+ 
                </ul>
 
                </div>
