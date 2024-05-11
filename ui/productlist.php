@@ -82,13 +82,13 @@ include_once "header.php";
 
                 <div class="btn-group">
 
-                <a href="printbarcode.php?id='.$row->pID.'" class="btn btn-primary btn-xs role="button"><span class="fa fa-barcode" style="color:#ffffff" data-toggle="tooltip" title="Print Barcode"></span></a>  
+                <a href="printbarcode.php?id='.$row->pID.'" class="btn btn-dark btn-xs role="button"><span class="fa fa-barcode" style="color:#ffffff" data-toggle="tooltip" title="Print Barcode"></span></a>  
 
                 <a href="viewproduct.php?id='.$row->pID.'" class="btn btn-warning btn-xs role="button"><span class="fa fa-eye"  style="color:#ffffff" data-toggle="tooltip" title="View Product"></span></a>  
 
                 <a href="editproduct.php?id='.$row->pID.'" class="btn btn-success btn-xs role="button"><span class="fa fa-edit" style="color:#ffffff" data-toggle="tooltip" title="Edit Product"></span></a>  
             
-                <button id='.$row->pID.' class="btn btn-danger btn-xs"><span class="fa fa-trash" style="color:#ffffff" data-toggle="tooltip" title="Delete Product"></span></button>
+                <button id='.$row->pID.' class="btn btn-danger btn-xs btndelete"><span class="fa fa-trash" style="color:#ffffff" data-toggle="tooltip" title="Delete Product"></span></button>
 
                 </div>
 
@@ -143,4 +143,50 @@ $(document).ready( function () {
     $('[data-toggle="tooltip"]').tooltip();
 } );
 
+</script>
+
+<script>
+
+$(document).ready(function(){
+  $('.btndelete').click( function() {
+    var tdh = $(this);
+    var id = $(this).attr("id");
+
+    Swal.fire({
+    title: "Do you want to delete this product?",
+    text: "This action cannot be undone",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+    $.ajax({
+
+      url: 'productdelete.php',
+      type: "post",
+      data: {
+      pidd: id
+      },
+      success: function(data) {
+      tdh.parents('tr').hide();
+      }
+
+      });
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "Product deleted successfully",
+          icon: "success"
+        });
+      }
+    });
+
+});
+
+});
+
+</script>
 </script>
