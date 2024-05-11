@@ -93,14 +93,14 @@ th {background: #eee;}
 
                 <div class="input-group mb-3">
                   <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fa fa-barcode"></i></span>
+                    <span class="input-group-text"><i class="fa fa-barcode" placeholder="Scan Barcode" id=txtbarcode_id></i></span>
                   </div>
                   <input type="text" class="form-control" placeholder="Scan Barcode">
                 </div>
 
                   <select class="form-control select2" data-dropdown-css-class="select2-purple" style="width: 100%;">
 
-                    <option>Select or Search product</option><?php echo fill_product($pdo); ?>
+                    <option>Select or Search product</option><?php echo fill_product($pdo);?>
   
 
                   </select>
@@ -392,6 +392,10 @@ include_once"footer.php";
           $('.details').append(tr);
 
 
+          //uncomment if this line is essential for this part
+          // calculate();
+
+
         }//end f function addrow
 
       }
@@ -407,7 +411,7 @@ include_once"footer.php";
 
 
 
-//for search bar
+//for search ajax
 var productarr=[];
 
 $(function(){
@@ -427,7 +431,7 @@ $(function(){
 
       //console.log(data);
 
-      if(Jquery.inArray(data["pID"], productarr)!== -1){
+      if(jQuery.inArray(data["pID"], productarr)!== -1){
 
         var actualqty = parseInt($('#qty_id'+data["pID"]).val())+1;
         $('#qty_id'+data["pID"].val(actualqty));
@@ -441,7 +445,6 @@ $(function(){
 
         $("#taxtbarcode_id").val("");
 
-        calculate();
 
 
       }else{
@@ -455,6 +458,7 @@ $(function(){
                 $("#txtbarcode_id").val("");
 
                 function addrow(pID, Product, ProductPrice, Stock, Barcode){
+                  
 
                   var tr='<tr>'+
                   '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">'+Product+'</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="'+Product+'"><input type="hidden" class="form-control pID" name="pid_arr[]" value="'+pID+'"></td>'+
@@ -472,6 +476,8 @@ $(function(){
                   '</tr>';
 
                   $('.details').append(tr);
+
+                  calculate();
 
 
 
@@ -511,6 +517,7 @@ if((quantity.val()-0)>(tr.find(".stock_c").val()-0)){
 
 }
 
+calculate();
 
 });
 
@@ -546,8 +553,24 @@ sgst=sgst*subtotal;
 cgst=cgst/100;
 cgst=cgst*subtotal;
 
+discount=discount/100;
+discount=discount*subtotal;
+
+
+
 $("#txtsgst_id_n").val(sgst.toFixed(2)); 
+
 $("#txtcgst_id_n").val(cgst.toFixed(2)); 
+
+$("#txtdiscount_n").val(discount.toFixed(2)); 
+
+total=sgst+cgst+subtotal-discount;
+due=total-paid_amt;
+
+$("#txttotal").val(total.toFixed(2)); 
+
+$("#txtdue").val(due.toFixed(2)); 
+
 
 
 }
