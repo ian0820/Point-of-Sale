@@ -3,98 +3,81 @@
 include_once 'connectdb.php';
 session_start();
 
-include_once "header.php";
+  if($_SESSION['user_email']==""){
+
+    header('location:../index.php');
+
+  }
+
+  if($_SESSION['role']=='Admin'){
+
+    include_once "header.php";
+
+  }else{
+
+    include_once "headeruser.php";
+
+  }
 
 
-//save button
-if (isset($_POST['btnsave'])) {
 
-    $category = $_POST['txtcategory'];
+    if(isset($_POST['btn_update'])){
 
-        if(empty($category)){
+        $oldpassword_txt = $_POST['txt_oldpassword'];
+        $newpassword_txt = $_POST['txt_newpassword'];
+        $rnewpassword_txt = $_POST['txt_rnewpassword'];
 
-            $_SESSION['status']="Field is empty";
-            $_SESSION['status_code']="warning";
+        $email = $_SESSION['user_email'];
+
+        $select = $pdo->prepare ("select * from tbl_user where user_email='$email'");
+
+        $select->execute();
+        $row=$select->fetch(PDO::FETCH_ASSOC);
+
+        $user_email_db=$row['user_email'];
+        $password_db=$row['password'];
+
+        if($oldpassword_txt==$password_db){
+
+          if($newpassword_txt==$rnewpassword_txt){
+
+            
+            $update=$pdo->prepare("update tbl_user set password=:pass where user_email=:email");
+
+            $update->bindParam(':pass',$rnewpassword_txt);
+            $update->bindParam(':email',$email);
+
+              if($update->execute()){
+
+                $_SESSION['status'] = "Password updated successfully";
+                $_SESSION['status_code'] = "success";
+
+              }else{
+
+                $_SESSION['status'] = "Password not updated successfully";
+                $_SESSION['status_code'] = "error";
+
+              }
+
+          }else{
+
+            $_SESSION['status']="New password does not match"; 
+            $_SESSION['status_code']="error";
+
+          }
+
+
 
         }else{
 
-            $insert=$pdo->prepare("insert into tbl_category (category) values (:cat)");
+          $_SESSION['status']="Password does not match"; 
+          $_SESSION['status_code']="error";
 
-            $insert->bindParam(':cat',$category);
-
-            if($insert->execute()){
-
-                $_SESSION['status']="Category added successfully";
-                $_SESSION['status_code']="success";
-    
-            }else{
-
-                $_SESSION['status']="Category added failed";
-                $_SESSION['status_code']="warning";
-    
-            }
         }
 
-}
+    }
 
-//update button
-if (isset($_POST['btnupdate'])) {
 
-    $category = $_POST['txtcategory'];
-    $id = $_POST['txtcatid'];
-
-        if(empty($category)){
-
-            $_SESSION['status']="Field is empty";
-            $_SESSION['status_code']="warning";
-
-        }else{
-
-            $update=$pdo->prepare("update tbl_category set category=:cat where catid=".$id);
-
-            $update->bindParam(':cat',$category);
-
-            if($update->execute()){
-
-                $_SESSION['status']="Category update successfully";
-                $_SESSION['status_code']="success";
-    
-            }else{
-
-                $_SESSION['status']="Category update failed";
-                $_SESSION['status_code']="warning";
-    
-            }
-        }
-
-}
-
-//delete button
-error_reporting(0);
-
-$id=$_GET['id'];
-
-if(isset($id)){
-
-    $delete=$pdo->prepare("delete from tbl_category where catid=".$id);
-      
-              if ($delete->execute()){
-      
-                  $_SESSION['status']="Category deleted successfully";
-                      $_SESSION['status_code']="success";
-
-                  }else{
-      
-                  $_SESSION['status']="Category deletion failed";
-                  $_SESSION['status_code']="warning";
-
-                  }
-}else{
-
-  $_SESSION['status']="Category deletion failed";
-  $_SESSION['status_code']="warning";
-
-}
 
 ?>
 
@@ -105,7 +88,7 @@ if(isset($id)){
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0"><b>Category</b></h1>
+            <h1 class="m-0"><b>Change Password</b></h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -121,152 +104,65 @@ if(isset($id)){
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
-      <div class="card card-warning card-outline">
+        <div class="row">
+          <div class="col-lg-12">
+
+           <!-- Horizontal Form -->
+           <div class="card card-info">
               <div class="card-header">
-                <h5 class="m-0">Category Form</h5>
+                <h3 class="card-title">Create your new password</h3>
               </div>
-              
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form class="form-horizontal" action="" method="post">
+                <div class="card-body">
+                  
+                <div class="form-group row">
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">Old Password</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="inputPassword3" placeholder="Old Password" name="txt_oldpassword">
+                    </div>
+                  </div>
 
-              <form action="" method="post">
-              <div class="card-body">
+                  <div class="form-group row">
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">New Password</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="inputPassword3" placeholder="New Password" name="txt_newpassword">
+                    </div>
+                  </div>
 
-<div class="row">
-
-    <?php
-
-        if(isset($_POST['btnedit'])){
-
-            $select=$pdo->prepare("select * from tbl_category where catid = ".$_POST['btnedit']);
-
-            $select->execute();
-
-            if($select){
-
-                $row = $select->fetch(PDO::FETCH_OBJ);
-
-                echo'
-                <div class="col-md-4">
-
-
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Category</label>
-                    
-                    <input type="hidden" class="form-control" placeholder="Enter Category" value="'.$row->catid.'" name="txtcatid" >
-
-                    <input type="text" class="form-control" placeholder="Enter Category" value="'.$row->category.'" name="txtcategory" >
+                  <div class="form-group row">
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">Repeat Password</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="inputPassword3" placeholder="Repeat New Password" name="txt_rnewpassword">
+                    </div>
+                  </div>
+                  
                 </div>
-
+                <!-- /.card-body -->
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-info" name="btnupdate"><b>Update</b></button>
+                  <button type="submit" class="btn btn-info" name="btn_update">Update Password</button>
                 </div>
-
-                </div>';
-
-            }
-
-        }else{
-
-            echo'
-            <div class="col-md-4">
-
-
-            <div class="form-group">
-                <label for="exampleInputEmail1">Category</label>
-                <input type="text" class="form-control" placeholder="Enter Category" name="txtcategory" >
-            </div>
-
-            <div class="card-footer">
-                <button type="submit" class="btn btn-warning" name="btnsave"><b>Save</b></button>
-            </div>
-
-            </div>';
-            
-        }
-
-    ?>
-
-
-
-
-<div class="col-md-8">
-
-  <table id="table_category" class="table table-hover">
-    <thead>
-      
-        <tr>
-          <td><b>No.</b></td>
-          <td><b>Category</b></td>  
-          <td><b>Edit</b></td>
-          <td><b>Delete</b></td>
-        </tr>
-
-    </thead>
-
-  
-        
-        <?php
-
-          $select = $pdo->prepare("select * from tbl_category order by catid ASC");
-          $select->execute();
-
-          while ($row = $select->fetch(PDO::FETCH_OBJ)) {
-
-            echo'
-            <tr>
-              <td>'.$row->catid.'</td>
-              <td>'.$row->category.'</td>
-
-              <td>
-              
-                <button type="submit" class="btn btn-primary" value="'.$row->catid.'" name="btnedit">Edit</button>
-
-              </td>
-
-              <td>
-              
-              <a href="category.php?id='.$row->catid.'" class="btn btn-danger delete-btn" data-id="'.$row->catid.'" name= "btndelete"><i class="fa fa-trash-alt"></i></a></td>
-
-
-              </td>
-
-              </td>
-            </tr>';
-
-          }
-
-        ?>
-
-        <tbody>
-
-          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-        </tbody>
-      
-  </table>
-
-
-</div>
-
-
-              </div>
-
+                <!-- /.card-footer -->
               </form>
-
-              </div>
             </div>
+            <!-- /.card -->
+          
+          </div>
+          <!-- /.col-md-6 -->
+        </div>
+        <!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
 
-<?php
+  <?php
 
 include_once "footer.php";
 
 ?>
-
 
 <?php 
 
@@ -284,30 +180,7 @@ include_once "footer.php";
           title: '<?php echo $_SESSION['status'];?>'
         });
 
-        $(document).ready(function() {
-          $('.delete-btn').click(function(e) {
-          e.preventDefault();
-
-        var userId = $(this).data('id');
-
-        Swal.fire({
-          title: 'Are you sure?',
-          text: 'This action cannot be undone',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d63032',
-          confirmButtonText: 'Delete'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = 'category.php?id=' + userId;
-          }
-        });
-      });
-    });
-
   </script>
-
 
 
 <?php
@@ -317,11 +190,3 @@ include_once "footer.php";
   }
 
 ?>
-
-<script>
-
-$(document).ready( function () {
-    $('#table_category').DataTable();
-} );
-
-</script>
