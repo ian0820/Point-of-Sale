@@ -100,9 +100,13 @@ if (isset($_POST['btnupdate'])) {
 
         }else{
 
-            $select=$pdo->prepare("select * from tbl_user set username = username, user_email = user_email, age = age, address = address, contact = contact, role = role WHERE userid = ?");
+
+            $select=$pdo->prepare("update * from tbl_user set username = :username, user_email = :user_email, age = :age, address = :address, contact = :contact, role = :role WHERE userid = :userid");
 
             $row = $select->fetch(PDO::FETCH_OBJ);
+
+            
+
 
                 echo'
                 <div class="col-md-4">
