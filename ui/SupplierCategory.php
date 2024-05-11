@@ -12,19 +12,19 @@ $id=$_GET['id'];
 
 if(isset($id)){
 
-    $delete=$pdo->prepare("delete from tbl_catsupplier where CategoryID=".$id);
-      
-              if ($delete->execute()){
-      
-                  $_SESSION['status']="Supplier deleted successfully";
-                      $_SESSION['status_code']="success";
+      $delete=$pdo->prepare("delete from tbl_catsupplier where CategoryID=".$id);
+        
+                if ($delete->execute()){
+        
+                    $_SESSION['status']="Supplier deleted successfully";
+                        $_SESSION['status_code']="success";
 
-                  }else{
-      
-                  $_SESSION['status']="Supplier deletion failed";
-                  $_SESSION['status_code']="warning";
+                    }else{
+        
+                    $_SESSION['status']="Supplier deletion failed";
+                    $_SESSION['status_code']="warning";
 
-                  }
+                    }
 }else{
 
   $_SESSION['status']="Supplier deletion failed";
@@ -38,9 +38,24 @@ if(isset($id)){
 //save button
 if (isset($_POST['btnsave'])) {
 
-    $category = $_POST['txtcategory'];
+    $supplier = $_POST['txtsupplier'];
 
-        if(empty($category)){
+    $select = $pdo->prepare ("select CatSupplier from tbl_catsupplier where CatSupplier='$supplier'");
+
+    $select->execute();
+
+        if ($select->rowCount()>0){
+
+          $_SESSION['status']="Supplier already exist";
+          $_SESSION['status_code']="warning";
+
+        }else{
+
+          $_SESSION['status']="Supplier added successfully";
+          $_SESSION['status_code']="success";
+
+
+        if(empty($supplier)){
 
             $_SESSION['status']="Field is empty";
             $_SESSION['status_code']="warning";
@@ -49,7 +64,7 @@ if (isset($_POST['btnsave'])) {
 
             $insert=$pdo->prepare("insert into tbl_catsupplier (CatSupplier) values (:cat)");
 
-            $insert->bindParam(':cat',$category);
+            $insert->bindParam(':cat',$supplier);
 
             if($insert->execute()){
 
@@ -63,16 +78,16 @@ if (isset($_POST['btnsave'])) {
     
             }
         }
-
+}
 }
 
 //update button
 if (isset($_POST['btnupdate'])) {
 
-    $category = $_POST['txtcategory'];
+    $supplier = $_POST['txtsupplier'];
     $id = $_POST['txtcatid'];
 
-        if(empty($category)){
+        if(empty($supplier)){
 
             $_SESSION['status']="Field is empty";
             $_SESSION['status_code']="warning";
@@ -81,7 +96,7 @@ if (isset($_POST['btnupdate'])) {
 
             $update=$pdo->prepare("update tbl_catsupplier set CatSupplier=:cat where CategoryID=".$id);
 
-            $update->bindParam(':cat',$category);
+            $update->bindParam(':cat',$supplier);
 
             if($update->execute()){
 
@@ -157,7 +172,7 @@ if (isset($_POST['btnupdate'])) {
                     
                     <input type="hidden" class="form-control" placeholder="Enter Category" value="'.$row->CategoryID.'" name="txtcatid" >
 
-                    <input type="text" class="form-control" placeholder="Enter Supplier" value="'.$row->CatSupplier.'" name="txtcategory" >
+                    <input type="text" class="form-control" placeholder="Enter Supplier" value="'.$row->CatSupplier.'" name="txtsupplier" >
                 </div>
 
                 <div class="card-footer">
@@ -176,7 +191,7 @@ if (isset($_POST['btnupdate'])) {
 
             <div class="form-group">
                 <label for="exampleInputEmail1">Supplier</label>
-                <input type="text" class="form-control" placeholder="Enter Supplier" name="txtcategory" >
+                <input type="text" class="form-control" placeholder="Enter Supplier" name="txtsupplier" >
             </div>
 
             <div class="card-footer">
