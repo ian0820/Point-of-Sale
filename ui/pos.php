@@ -194,7 +194,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">CGST(%): </span>
                   </div>
-                  <input type="text" class="form-control" id="txtcgst_id_n" value="<?php echo $row->cgst; ?>" readonly>
+                  <input type="text" class="form-control" id="txtcgst_id_p" value="<?php echo $row->cgst; ?>" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">%</span>
                   </div>
@@ -286,7 +286,7 @@ th {background: #eee;}
 
                 <div class="card-footer">
 
-                  <input type="button" value="Save Order" class="btn btn-primary"></input>
+                  <input type="button" value="Save Order" class="btn btn-primary">
 
                 </div>
             
@@ -359,7 +359,7 @@ include_once"footer.php";
 
         $("#txtbarcode_id").val("");
 
-        calculate();
+        calculate(0,0);
 
 
       }else{
@@ -375,23 +375,23 @@ include_once"footer.php";
         function addrow(pID, Product, ProductPrice, Stock, Barcode){
 
           var tr='<tr>'+
-          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">'+Product+'</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="'+Product+'"><input type="hidden" class="form-control pID" name="pid_arr[]" value="'+pID+'"></td>'+
+              '<td style="text-align: left; vertical-align: middle; font-size17px;"><class="form-control product_c" name="product_arr[]" <spaclass="badge badge-dark">'+Product+'</span><input type="hiddenclass="form-control pid" name="pid_arr[]" value="'+Produ+'"><input type="hidden" class="form-control pID" name="pid_arr[]value="'+pID+'"></td>'+
 
-          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
+              '<td style="text-align: left; vertical-align: middle; font-size17px;"><span class="badge badge-primary stocklbl" name="stock_arr" id="stock_id'+pID+'">'+Stock+'</span><input type="hiddenclass="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+p+'" value="'+Stock+'"></td>'+
 
-          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-warning price" name="price_arr[]" id="price_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control price_c" name="price_c_arr[]" id="price_idd'+pID+'" value="'+ProductPrice+'"></td>'+
+              '<td style="text-align: left; vertical-align: middle; font-size17px;"><span class="badge badge-warning price" name="price_arr[]id="price_id'+pID+'">'+ProductPrice+'</span><input type="hiddenclass="form-control price_c" name="price_c_arr[]" id="price_idd'+p+'" value="'+ProductPrice+'"></td>'+
 
-          '<td><input type="text" class="form-control qty" name="quantity_arr[]" id="qty_id'+pID+'" value="'+1+'" size="1"></td>'+
+              '<td><input type="text" class="form-control qty" name="quantity_a[]" id="qty_id'+pID+'" value="'+1+'" size="1"></td>'+
 
-          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-danger totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
+                  '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-danger totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
 
-          '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
+                  '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
 
-          '</tr>';
+                  '</tr>';
 
-          $('.details').append(tr);
+                  $('.details').append(tr);
 
-          calculate();
+                  calculate(0,0);
 
 
         }//end f function addrow
@@ -429,21 +429,21 @@ $(function(){
 
       //console.log(data);
 
-      if(jQuery.inArray(data["pID"], productarr)!== -1){
+      if(jQuery.inArray(data["pID"],productarr)!== -1){
 
         var actualqty = parseInt($('#qty_id'+data["pID"]).val())+1;
         $('#qty_id'+data["pID"].val(actualqty));
 
 
         //check saleprice if the code is not working (edrian)
-        var saleprice = parseInt(actualqty)=data["ProductPrice"];
+        var saleprice = parseInt(actualqty)*data["ProductPrice"];
 
         $('#saleprice_id'+data["pID"]).html(saleprice);
         $('#saleprice_idd'+data["pID"]).val(saleprice);
 
-        $("#taxtbarcode_id").val("");
+        $("#txtbarcode_id").val("");
 
-        calculate();
+        calculate(0,0);
 
       }else{
 
@@ -475,9 +475,7 @@ $(function(){
 
                   $('.details').append(tr);
 
-                  calculate();
-
-
+                  calculate(0,0);
 
 }//end f function addrow
 
@@ -500,78 +498,97 @@ var tr = $(this).parent().parent();
 
 if((quantity.val()-0)>(tr.find(".stock_c").val()-0)){
 
-Swal.fire("WARNING!", "SORRY!  This Much of Quantity is Not Available", "warning");
+Swal.fire("Not enough stock", "Sorry, the inserted quantity is not available.", "warning");
 quantity.val(1);
 
-tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
+  tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
 
-tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
+  tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
 
 }else{
 
   tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
 
-tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
+  tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
+
+  calculate(0,0);
 
 }
 
-calculate();
 
 });
 
 
-function calculate(){
+function calculate(dis,paid) {
+    var subtotal = 0;
+    var discount = dis; // Rename the discount variable to avoid confusion
+    var sgst = 0;
+    var cgst = 0;
+    var total = 0;
+    var paid_amt = paid;
+    var due = 0;
 
-  var subtotal=0;
-  var discount=0;
-  var sgst=0;
-  var cgst=0;
-  var total=0;
-  var paid_amt=0;
-  var due=0;
+    $(".saleprice").each(function() {
+        subtotal += ($(this).val() * 1);
+    });
+    $("#txtsubtotal_id").val(subtotal.toFixed(2));
 
-  $(".saleprice").each(function(){
+    sgst = parseFloat($("#txtsgst_id_p").val());
 
-    subtotal=subtotal+($(this).val()*1);
+    cgst = parseFloat($("#txtcgst_id_p").val());
 
-  });
+    discount = parseFloat($("#txtdiscount_p").val()); 
 
-$("#txtsubtotal_id").value(subtotal.toFixed(2));
+    sgst = sgst/100;
+    sgst = sgst*subtotal;
 
+    cgst = cgst/100;
+    cgst = cgst*subtotal;
 
-sgst=parseFloat($("#txtsgst_id_p").val());
+    var discount = (discount/100)*subtotal; 
 
-cgst=parseFloat($("#txtcgst_id_p").val());
+    $("#txtdiscount_n").val(discount.toFixed(2)); 
 
-discount=parseFloat($("#txtdiscount_p").val());
+    $("#txtsgst_id_n").val(sgst.toFixed(2));
 
-sgst=sgst/100;
-sgst=sgst*subtotal;
+    $("#txtcgst_id_n").val(cgst.toFixed(2));
 
-cgst=cgst/100;
-cgst=cgst*subtotal;
+    total = sgst + cgst + subtotal - discount;
 
-discount=discount/100;
-discount=discount*subtotal;
+    $("#txttotal").val(total.toFixed(2));
 
+    $("#txtdue").val(due.toFixed(2));
 
-
-$("#txtsgst_id_n").val(sgst.toFixed(2)); 
-
-$("#txtcgst_id_n").val(cgst.toFixed(2)); 
-
-$("#txtdiscount_n").val(discount.toFixed(2)); 
-
-total=sgst+cgst+subtotal-discount;
-due=total-paid_amt;
-
-$("#txttotal").val(total.toFixed(2)); 
-
-$("#txtdue").val(due.toFixed(2)); 
+}//end
 
 
+$("#txtdiscount_p").keyup(function() {
 
-}
+    var discount = $(this).val();
+    var paid = $("#txtpaid").val();
+
+    calculate(discount, 0);
+
+});
+
+$("#txtpaid").keyup(function() {
+
+    var paid = $(this).val();
+    var discount = $("#txtdiscount_p").val();
+
+    calculate(discount, paid);
+});
+
+$(document).on('click', '.btnremove', function() {
+    var removed = $(this).attr("data-id");
+    $(this).closest('tr').remove(); // Remove the closest table row
+    productarr = jQuery.grep(productarr, function(value) {
+        return value != removed;
+    });
+
+    calculate(0, 0); // Recalculate totals after removal
+
+});
     
 
     
