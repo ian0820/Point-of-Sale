@@ -25,6 +25,52 @@ return $output;  ;
 }
 
 
+if(isset($_POST['btnsaveorder'])){
+
+$orderdate    = date('Y-m-d');
+$subtotal     = $_POST['txtsubtotal'];
+$discount     = $_POST['txtdiscount'];;
+$sgst         = $_POST['txtsgst'];
+$cgst         = $_POST['txtcgst'];
+$total        = $_POST['txttotal'];
+$payment_type = $_POST['rb'];
+$due          = $_POST['txtdue'];
+$paid         = $_POST['txtpaid'];
+
+
+$arr_pid = $_POST['pid_arr'];
+$arr_barcode = $_POST['barcode_arr'];
+$arr_name = $_POST['pid_arr'];
+$arr_stock = $_POST['stock_c_arr'];
+$arr_qty = $_POST['quantity_arr'];
+$arr_price = $_POST['price_c_arr'];
+$arr_total = $_POST['saleprice_arr'];
+
+// var_dump($arr_total);
+
+$insert=$pdo->prepare("insert into tbl_invoice (order_date, subtotal, discount, sgst, cgst, total, payment_type, due, paid) value (:order_date, :subtotal, :discount, :sgst, :cgst, :total, :payment_type, :due, :paid)");
+
+$insert->bindParam(':order_date',$orderdate);
+$insert->bindParam(':subtotal',$subtotal);
+$insert->bindParam(':discount',$discount);
+$insert->bindParam(':sgst',$sgst);
+$insert->bindParam(':cgst',$cgst);
+$insert->bindParam(':total', $total);
+$insert->bindParam(':payment_type', $payment_type);
+$insert->bindParam(':due', $due);
+$insert->bindParam(':paid', $paid);
+
+$insert->execute();
+
+}
+
+
+
+
+
+
+
+
 $select=$pdo->prepare("select * from tbl_taxdis where taxdis_id =1");
 $select->execute();
 $row=$select->fetch(PDO::FETCH_OBJ);
@@ -79,6 +125,7 @@ th {background: #eee;}
         <div class="row">
           <div class="col-lg-12">
 
+
           <div class="card card-primary card-outline">
               <div class="card-header">
                 <h5 class="m-0">POS</h5>
@@ -95,8 +142,11 @@ th {background: #eee;}
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fa fa-barcode"></i></span>
                   </div>
-                  <input type="text" class="form-control" placeholder="Scan Barcode" id=txtbarcode_id>
+                  <input type="text" class="form-control" placeholder="Scan Barcode" autocomplete="off"  name="txtbarcode" id=txtbarcode_id>
                 </div>
+
+          <!-- Form tag starts here -->
+          <form action="" method="post" name="">
 
                   <select class="form-control select2" data-dropdown-css-class="select2-purple" style="width: 100%;">
 
@@ -143,11 +193,11 @@ th {background: #eee;}
                   <div class="input-group-prepend">
                     <span class="input-group-text">SUBTOTAL: </span>
                   </div>
-                  <input type="text" class="form-control" id="txtsubtotal_id" readonly>
+                  <input type="text" class="form-control" name="txtsubtotal" id="txtsubtotal_id" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
-                </div>
+                </div> 
                 
                 <br>
 
@@ -155,7 +205,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">DISCOUNT: </span>
                   </div>
-                  <input type="text" class="form-control" id="txtdiscount_p" value="<?php echo $row->discount; ?>">
+                  <input type="text" class="form-control" name="txtdiscount" id="txtdiscount_p" value="<?php echo $row->discount; ?>">
                   <div class="input-group-append">
                     <span class="input-group-text">%</span>
                   </div>
@@ -179,7 +229,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">SGST(%): </span>
                   </div>
-                  <input type="text" class="form-control" id="txtsgst_id_p" value="<?php echo $row->sgst; ?>" readonly>
+                  <input type="text" class="form-control" name="txtsgst" id="txtsgst_id_p" value="<?php echo $row->sgst; ?>" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">%</span>
                   </div>
@@ -191,7 +241,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">CGST(%): </span>
                   </div>
-                  <input type="text" class="form-control" id="txtcgst_id_p" value="<?php echo $row->cgst; ?>" readonly>
+                  <input type="text" class="form-control" name="txtcgst" id="txtcgst_id_p" value="<?php echo $row->cgst; ?>" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">%</span>
                   </div>
@@ -225,9 +275,9 @@ th {background: #eee;}
 
                 <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">TOTAL(₱): </span>
+                    <span class="input-group-text">TOTAL(₱):</span>
                   </div>
-                  <input type="text" class="form-control form-control-lg total" id="txttotal" readonly>
+                  <input type="text" class="form-control form-control-lg total"  name="txttotal" id="txttotal" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -237,19 +287,19 @@ th {background: #eee;}
 
                 <div class="form-group clearfix">
                       <div class="icheck-success d-inline">
-                        <input type="radio" name="r3" checked id="radioSuccess1">
+                        <input type="radio" name="rb" value="Cash" checked id="radioSuccess1">
                         <label for="radioSuccess1">
                           CASH
                         </label>
                       </div>
                       <div class="icheck-primary d-inline">
-                        <input type="radio" name="r3" id="radioSuccess2">
+                        <input type="radio" name="rb" value="Card" id="radioSuccess2">
                         <label for="radioSuccess2">
                           CARD
                         </label>
                       </div>
                       <div class="icheck-danger d-inline">
-                        <input type="radio" name="r3" id="radioSuccess3">
+                        <input type="radio" name="rb" value="Check" id="radioSuccess3">
                         <label for="radioSuccess3">
                           CHECK
                         </label>
@@ -261,7 +311,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">DUE(₱)</span>
                   </div>
-                  <input type="text" class="form-control" id="txtdue" readonly>
+                  <input type="text" class="form-control" name="txtdue" id="txtdue" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -274,7 +324,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">PAID(₱): </span>
                   </div>
-                  <input type="text" class="form-control" id="txtpaid">
+                  <input type="text" class="form-control" name="txtpaid" id="txtpaid">
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -284,7 +334,9 @@ th {background: #eee;}
 
                 <div class="card-footer">
 
-                  <input type="button" value="Save Order" class="btn btn-primary">
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-success" name="btnsaveorder"><b>Save Order</b></button>
+                </div>
 
                 </div>
             
@@ -293,7 +345,7 @@ th {background: #eee;}
 
                   </div>
 
-
+                </form>
 
                </div>
 
@@ -357,7 +409,7 @@ include_once"footer.php";
       $('#saleprice_id'+data["pID"]).html(saleprice);
       $('#saleprice_idd'+data["pID"]).val(saleprice);
 
-      $("#txtbarcode_id").val("");
+      //$("#txtbarcode_id").val("");
 
       calculate(0,0);
 
@@ -369,12 +421,15 @@ include_once"footer.php";
 
         productarr.push(data["pID"]);
 
-        $("#txtbarcode_id").val("");
+        //$("#txtbarcode_id").val("");
 
         function addrow(pID, Product, ProductPrice, Stock, Barcode){
           
 
           var tr='<tr>'+
+
+          '<input type="hidden" class="form-control barcode" name="barcode_arr[]" id="barcode_id'+Barcode+'" value="'+Barcode+'">'+
+
           '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">'+Product+'</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="'+Product+'"><input type="hidden" class="form-control pID" name="pid_arr[]" value="'+pID+'"></td>'+
 
           '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
@@ -383,11 +438,11 @@ include_once"footer.php";
 
           '<td><input type="text" class="form-control qty" name="quantity_arr[]" id="qty_id'+pID+'" value="'+1+'" size="1"></td>'+
 
-          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-danger totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-success totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
 
 
           //remove button
-          '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
+          '<td><center><button type="button" name="remove" class="btn btn-danger btn-sm btnremove" data-id="'+pID+'"><span class="fas fa-trash"></span></center></td>'
 
           '</tr>';
 
@@ -399,6 +454,7 @@ include_once"footer.php";
 
 }
 
+$("#txtbarcode_id").val("");
 
 } //end pf success function
 
@@ -443,7 +499,7 @@ $(function(){
         $('#saleprice_id'+data["pID"]).html(saleprice);
         $('#saleprice_idd'+data["pID"]).val(saleprice);
 
-        $("#txtbarcode_id").val("");
+        // $("#txtbarcode_id").val("");
 
         calculate(0,0);
 
@@ -455,12 +511,15 @@ $(function(){
 
                 productarr.push(data["pID"]);
 
-                $("#txtbarcode_id").val("");
+                // $("#txtbarcode_id").val("");
 
                 function addrow(pID, Product, ProductPrice, Stock, Barcode){
                   
 
                   var tr='<tr>'+
+             
+                  '<input type="hidden" class="form-control barcode" name="barcode_arr[]" id="barcode_id'+Barcode+'" value="'+Barcode+'">'+
+
                   '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">'+Product+'</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="'+Product+'"><input type="hidden" class="form-control pID" name="pid_arr[]" value="'+pID+'"></td>'+
 
                   '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
@@ -469,9 +528,13 @@ $(function(){
 
                   '<td><input type="text" class="form-control qty" name="quantity_arr[]" id="qty_id'+pID+'" value="'+1+'" size="1"></td>'+
 
-                  '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-danger totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
+                  '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-success totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
 
-                  '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
+
+                  //old remove button (old remove button in barcode was removed)
+                  // '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
+
+                  '<td><center><button type="button" name="remove" class="btn btn-danger btn-sm btnremove" data-id="'+pID+'"><span class="fas fa-trash"></span></center></td>'
 
                   '</tr>';
 
@@ -483,6 +546,7 @@ $(function(){
 
 }
 
+$("#txtbarcode_id").val("");
 
 } //end pf success function
 
@@ -555,11 +619,12 @@ function calculate(dis,paid) {
     discount = discount/100;
     discount = discount*subtotal; 
 
-    $("#txtdiscount_n").val(discount.toFixed(2)); 
 
     $("#txtsgst_id_n").val(sgst.toFixed(2));
 
     $("#txtcgst_id_n").val(cgst.toFixed(2));
+
+    $("#txtdiscount_n").val(discount.toFixed(2)); 
 
     total = sgst + cgst + subtotal - discount;
     due = total-paid_amt;
@@ -568,8 +633,7 @@ function calculate(dis,paid) {
 
     $("#txtdue").val(due.toFixed(2));
 
-}//end
-
+}//end calculate function
 
 $("#txtdiscount_p").keyup(function() {
 
@@ -590,12 +654,12 @@ $("#txtpaid").keyup(function() {
 
 $(document).on('click', '.btnremove', function() {
     var removed = $(this).attr("data-id");
-    $(this).closest('tr').remove(); // Remove the closest table row
+    $(this).closest('tr').remove();
     productarr = jQuery.grep(productarr, function(value) {
         return value != removed;
     });
 
-    calculate(0, 0); // Recalculate totals after removal
+    calculate(0, 0);
 
 });
     
