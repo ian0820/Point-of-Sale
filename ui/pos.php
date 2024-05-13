@@ -131,9 +131,6 @@ th {background: #eee;}
                   </tr>
 
                 </tbody>
-
-
-
                 </table>
 
           </div>
@@ -262,13 +259,14 @@ th {background: #eee;}
 
                 <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">DUE(₱): </span>
+                    <span class="input-group-text">DUE(₱)</span>
                   </div>
                   <input type="text" class="form-control" id="txtdue" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
-                </div>
+                </div> 
+
 
                 <br>
 
@@ -341,71 +339,73 @@ include_once"footer.php";
     data: {id:barcode},
     success: function(data){
 
-      alert("pID");
+      // alert("pID");
 
-      console.log(data);
+      // console.log(data);
 
-      if(jQuery.inArray(data["pID"], productarr)!== -1){
+      if(jQuery.inArray(data["pID"],productarr)!== -1){
 
-        var actualqty = parseInt($('#qty_id'+data["pID"]).val())+1;
-        $('#qty_id'+data["pID"].val(actualqty));
-
-
-        //check saleprice if the code is not working (edrian)
-        var saleprice = parseInt(actualqty)*data["ProductPrice"];
-
-        $('#saleprice_id'+data["pID"]).html(saleprice);
-        $('#saleprice_idd'+data["pID"]).val(saleprice);
-
-        $("#txtbarcode_id").val("");
-
-        calculate(0,0);
+      var actualqty = parseInt($('#qty_id'+data["pID"]).val())+1;
+      $('#qty_id'+data["pID"].val(actualqty));
 
 
-      }else{
+      //check saleprice if the code is not working (edrian)
+      var saleprice = parseInt(actualqty)*data["ProductPrice"];
 
-        //revised version
+      $('#saleprice_id'+data["pID"]).html(saleprice);
+      $('#saleprice_idd'+data["pID"]).val(saleprice);
 
-        addrow(data["pID"], data["Product"], data["ProductPrice"], data["Stock"], data["Barcode"]);
+      $("#txtbarcode_id").val("");
+
+      calculate(0,0);
+
+}else{
+
+       //revised version
+
+       addrow(data["pID"], data["Product"], data["ProductPrice"], data["Stock"], data["Barcode"]);
 
         productarr.push(data["pID"]);
 
         $("#txtbarcode_id").val("");
 
         function addrow(pID, Product, ProductPrice, Stock, Barcode){
+          
 
           var tr='<tr>'+
-              '<td style="text-align: left; vertical-align: middle; font-size17px;"><class="form-control product_c" name="product_arr[]" <spaclass="badge badge-dark">'+Product+'</span><input type="hiddenclass="form-control pid" name="pid_arr[]" value="'+Produ+'"><input type="hidden" class="form-control pID" name="pid_arr[]value="'+pID+'"></td>'+
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">'+Product+'</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="'+Product+'"><input type="hidden" class="form-control pID" name="pid_arr[]" value="'+pID+'"></td>'+
 
-              '<td style="text-align: left; vertical-align: middle; font-size17px;"><span class="badge badge-primary stocklbl" name="stock_arr" id="stock_id'+pID+'">'+Stock+'</span><input type="hiddenclass="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+p+'" value="'+Stock+'"></td>'+
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
 
-              '<td style="text-align: left; vertical-align: middle; font-size17px;"><span class="badge badge-warning price" name="price_arr[]id="price_id'+pID+'">'+ProductPrice+'</span><input type="hiddenclass="form-control price_c" name="price_c_arr[]" id="price_idd'+p+'" value="'+ProductPrice+'"></td>'+
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-warning price" name="price_arr[]" id="price_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control price_c" name="price_c_arr[]" id="price_idd'+pID+'" value="'+ProductPrice+'"></td>'+
 
-              '<td><input type="text" class="form-control qty" name="quantity_a[]" id="qty_id'+pID+'" value="'+1+'" size="1"></td>'+
+          '<td><input type="text" class="form-control qty" name="quantity_arr[]" id="qty_id'+pID+'" value="'+1+'" size="1"></td>'+
 
-                  '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-danger totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
-
-                  '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
-
-                  '</tr>';
-
-                  $('.details').append(tr);
-
-                  calculate(0,0);
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-danger totalamt" name="netamt_arr[]" id="saleprice_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+pID+'" value="'+ProductPrice+'"></td>'+
 
 
-        }//end f function addrow
+          //remove button
+          '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
 
-      }
+          '</tr>';
+
+          $('.details').append(tr);
+
+          calculate(0,0);
+
+}//end f function addrow
+
+}
 
 
-    } //end pf success function
+} //end pf success function
 
-  }) //end of ajax request
+}) //end of ajax request
 
 }) // end of onchange function
 
 }); // end of main function
+
 
 
 
@@ -505,6 +505,8 @@ quantity.val(1);
 
   tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
 
+  calculate(0,0);
+
 }else{
 
   tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
@@ -521,7 +523,7 @@ quantity.val(1);
 
 function calculate(dis,paid) {
     var subtotal = 0;
-    var discount = dis; // Rename the discount variable to avoid confusion
+    var discount = dis;
     var sgst = 0;
     var cgst = 0;
     var total = 0;
@@ -529,8 +531,11 @@ function calculate(dis,paid) {
     var due = 0;
 
     $(".saleprice").each(function() {
-        subtotal += ($(this).val() * 1);
+
+        subtotal=subtotal+($(this).val()*1);
+
     });
+
     $("#txtsubtotal_id").val(subtotal.toFixed(2));
 
     sgst = parseFloat($("#txtsgst_id_p").val());
@@ -545,7 +550,8 @@ function calculate(dis,paid) {
     cgst = cgst/100;
     cgst = cgst*subtotal;
 
-    var discount = (discount/100)*subtotal; 
+    discount = discount/100;
+    discount = discount*subtotal; 
 
     $("#txtdiscount_n").val(discount.toFixed(2)); 
 
@@ -554,6 +560,7 @@ function calculate(dis,paid) {
     $("#txtcgst_id_n").val(cgst.toFixed(2));
 
     total = sgst + cgst + subtotal - discount;
+    due = total-paid_amt;
 
     $("#txttotal").val(total.toFixed(2));
 
