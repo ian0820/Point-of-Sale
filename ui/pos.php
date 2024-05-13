@@ -93,9 +93,9 @@ th {background: #eee;}
 
                 <div class="input-group mb-3">
                   <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fa fa-barcode" placeholder="Scan Barcode" id=txtbarcode_id></i></span>
+                    <span class="input-group-text"><i class="fa fa-barcode"></i></span>
                   </div>
-                  <input type="text" class="form-control" placeholder="Scan Barcode">
+                  <input type="text" class="form-control" placeholder="Scan Barcode" id=txtbarcode_id>
                 </div>
 
                   <select class="form-control select2" data-dropdown-css-class="select2-purple" style="width: 100%;">
@@ -327,7 +327,9 @@ include_once"footer.php";
     })
 
     var productarr=[];
+
     $(function(){
+
     $('#txtbarcode_id').on('change', function(){  
 
     var barcode = $("#txtbarcode_id").val();
@@ -350,7 +352,7 @@ include_once"footer.php";
 
 
       //check saleprice if the code is not working (edrian)
-      var saleprice = parseInt(actualqty)*data["ProductPrice"];
+      var saleprice = parseInt(actualqty)*data["saleprice"];
 
       $('#saleprice_id'+data["pID"]).html(saleprice);
       $('#saleprice_idd'+data["pID"]).val(saleprice);
