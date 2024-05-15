@@ -24,37 +24,38 @@ return $output;  ;
 
 }
 
+if(isset($_POST['btnsaveorder'])) {
 
-if(isset($_POST['btnsaveorder'])){
-
-$orderdate    = date('Y-m-d');
-$subtotal     = $_POST['txtsubtotal'];
-$discount     = $_POST['txtdiscount'];;
-$sgst         = $_POST['txtsgst'];
-$cgst         = $_POST['txtcgst'];
-$total        = $_POST['txttotal'];
-$payment_type = $_POST['rb'];
-$due          = $_POST['txtdue'];
-$paid         = $_POST['txtpaid'];
+  $orderdate = date('Y-m-d')  ;
+  $subtotal = $_POST['txtsubtotal'];
+  $discount = $_POST['txtdiscount'];
+  $sgst     = $_POST['txtsgst'];
+  $cgst =     $_POST['txtcgst'];
+  $total = $_POST['txttotal'];
+  $payment_type = $_POST['rb'];
+  $due = $_POST['txtdue'];
+  $paid = $_POST['txtpaid'];
 
 
-$arr_pid = $_POST['pid_arr'];
-$arr_barcode = $_POST['barcode_arr'];
-$arr_name = $_POST['pid_arr'];
-$arr_stock = $_POST['stock_c_arr'];
-$arr_qty = $_POST['quantity_arr'];
-$arr_price = $_POST['price_c_arr'];
-$arr_total = $_POST['saleprice_arr'];
+   $arr_pid     = $_POST['pid_arr'];
+   $arr_barcode   = $_POST['barcode_arr'];
+   $arr_name   = $_POST['product_arr'];
+   $arr_stock   = $_POST['stock_c_arr'];
+   $arr_qty     = $_POST['quantity_arr'];
+   $arr_price   = $_POST['price_c_arr']; 
+   $arr_total    = $_POST['saleprice_arr'];
 
-// var_dump($arr_total);
 
-$insert=$pdo->prepare("insert into tbl_invoice (order_date, subtotal, discount, sgst, cgst, total, payment_type, due, paid) value (:order_date, :subtotal, :discount, :sgst, :cgst, :total, :payment_type, :due, :paid)");
 
-$insert->bindParam(':order_date',$orderdate);
-$insert->bindParam(':subtotal',$subtotal);
-$insert->bindParam(':discount',$discount);
-$insert->bindParam(':sgst',$sgst);
-$insert->bindParam(':cgst',$cgst);
+
+$insert = $pdo->prepare("insert into tbl_invoice(order_date,subtotal,discount,sgst,cgst,total,payment_type,due,paid) value(:orderdate,:subtotal,:discount,:sgst,:cgst,:total,:payment_type,:due,:paid)");
+
+
+$insert->bindParam(':orderdate', $orderdate);
+$insert->bindParam(':subtotal', $subtotal);
+$insert->bindParam(':discount', $discount);
+$insert->bindParam(':sgst', $sgst);
+$insert->bindParam(':cgst', $cgst);
 $insert->bindParam(':total', $total);
 $insert->bindParam(':payment_type', $payment_type);
 $insert->bindParam(':due', $due);
@@ -62,11 +63,56 @@ $insert->bindParam(':paid', $paid);
 
 $insert->execute();
 
+$invoice_id=$pdo->lastInsertId();
+
+if($invoice_id!=null){
+
+for($i=0;$i<count($arr_pid);$i++){
+
+  $rem_qty=$arr_stock[$i]-$arr_qty[$i];
+
+  if($rem_qty<0){
+
+    return "Order is not completed";
+  }else{
+
+    $update=$pdo->prepare("update tbl_product SET  stock='$rem_qty' where pid='".$arr_pid[$i]."'");
+    $update->execute();
+
+
+  }
+
+  $insert=$pdo->prepare("insert into tbl_invoice_details (invoice_id,barcode,product_id,product_name,qty,rate,saleprice,order_date) 
+  values(:invid,:barcode,:pid,:name,:qty,:rate,:saleprice,:order_date)");
+
+  $insert->bindParam(':invid', $invoice_id);
+  $insert->bindParam(':barcode',$arr_barcode[$i]);
+  $insert->bindParam(':pid',$arr_pid[$i]);
+  $insert->bindParam(':name',$arr_name[$i]);
+  $insert->bindParam(':qty',$arr_qty[$i]);
+  $insert->bindParam(':rate',$arr_price[$i]);
+  $insert->bindParam(':saleprice',$arr_total[$i]);
+  $insert->bindParam(':order_date', $orderdate);
+
+
+if(!$insert->execute()){
+
+  print_r($insert->errorInfo());
+
 }
 
 
+}//end for loop
+
+// header('location:orderlist.php');
+
+}//1st end of if
 
 
+// var_dump($arr_total);
+
+
+}
 
 
 
@@ -333,38 +379,34 @@ th {background: #eee;}
                 <hr style="height: 1px; border-width: 0; color: black; background-color: black;">
 
                 <div class="card-footer">
-
                   <div class="text-center">
-                    <button type="submit" class="btn btn-success" name="btnsaveorder"><b>Save Order</b></button>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-success" name="btnsaveorder">Save Order</button>
+                  </div>
                 </div>
-
-                </div>
-            
-
             </div>
 
                   </div>
-
+  </div>
                 </form>
-
+</div>
                </div>
 
               </div>
             </div>
-          
-          </div>
           <!-- /.col-md-6 -->
         </div>
         <!-- /.row -->
-      </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.container-fluid -->
     </div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
 
-  <?php
+<?php
 
-include_once"footer.php";
+include_once "footer.php";
 
 ?>
 
@@ -430,7 +472,8 @@ include_once"footer.php";
 
           '<input type="hidden" class="form-control barcode" name="barcode_arr[]" id="barcode_id'+Barcode+'" value="'+Barcode+'">'+
 
-          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">'+Product+'</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="'+Product+'"><input type="hidden" class="form-control pID" name="pid_arr[]" value="'+pID+'"></td>'+
+          '<td style="text-align:left; vertical-align:middle; font-size:17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">' + Product + '</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="' + pID + '"><input type="hidden" class="form-control product" name="product_arr[]" value="' + Product + '"> </td>' +
+
 
           '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
 
@@ -520,7 +563,8 @@ $(function(){
              
                   '<input type="hidden" class="form-control barcode" name="barcode_arr[]" id="barcode_id'+Barcode+'" value="'+Barcode+'">'+
 
-                  '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">'+Product+'</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="'+Product+'"><input type="hidden" class="form-control pID" name="pid_arr[]" value="'+pID+'"></td>'+
+                  '<td style="text-align:left; vertical-align:middle; font-size:17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">' + Product + '</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="' + pID + '"><input type="hidden" class="form-control product" name="product_arr[]" value="' + Product + '"> </td>' +
+
 
                   '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
 
@@ -666,3 +710,4 @@ $(document).on('click', '.btnremove', function() {
 
     
 </script>
+
