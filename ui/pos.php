@@ -39,7 +39,7 @@ if(isset($_POST['btnsaveorder'])) {
 
    $arr_pid     = $_POST['pid_arr'];
    $arr_barcode   = $_POST['barcode_arr'];
-   $arr_name   = $_POST['product_arr'];
+   $arr_name   = $_POST['pid_arr'];
    $arr_stock   = $_POST['stock_c_arr'];
    $arr_qty     = $_POST['quantity_arr'];
    $arr_price   = $_POST['price_c_arr']; 
@@ -74,9 +74,10 @@ for($i=0;$i<count($arr_pid);$i++){
   if($rem_qty<0){
 
     return "Order is not completed";
+    
   }else{
 
-    $update=$pdo->prepare("update tbl_product SET  stock='$rem_qty' where pid='".$arr_pid[$i]."'");
+    $update=$pdo->prepare("update tbl_product SET  Stock='$rem_qty' where pID='".$arr_pid[$i]."'");
     $update->execute();
 
 
@@ -104,7 +105,7 @@ if(!$insert->execute()){
 
 }//end for loop
 
-// header('location:orderlist.php');
+header('location:orderlist.php');
 
 }//1st end of if
 
@@ -380,20 +381,18 @@ th {background: #eee;}
 
                 <div class="card-footer">
                   <div class="text-center">
-                  <div class="text-center">
                     <button type="submit" class="btn btn-success" name="btnsaveorder">Save Order</button>
                   </div>
                 </div>
-            </div>
+
 
                   </div>
   </div>
-                </form>
+</form>
 </div>
-               </div>
-
-              </div>
-            </div>
+</div>
+</div>
+</div>
           <!-- /.col-md-6 -->
         </div>
         <!-- /.row -->
@@ -472,7 +471,7 @@ include_once "footer.php";
 
           '<input type="hidden" class="form-control barcode" name="barcode_arr[]" id="barcode_id'+Barcode+'" value="'+Barcode+'">'+
 
-          '<td style="text-align:left; vertical-align:middle; font-size:17px;"><class="form-control product_c" name="product_arr[]" <span class="badge badge-dark">' + Product + '</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="' + pID + '"><input type="hidden" class="form-control product" name="product_arr[]" value="' + Product + '"> </td>' +
+          '<td style="text-align:left; vertical-align:middle; font-size:17px;"><class="form-control product_c" name="pid_arr[]" <span class="badge badge-dark">' + Product + '</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="' + pID + '"><input type="hidden" class="form-control product" name="product_arr[]" value="' + Product + '"> </td>' +
 
 
           '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
