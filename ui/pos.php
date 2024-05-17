@@ -1,5 +1,7 @@
 <?php
 
+ob_start();
+
 include_once 'connectdb.php';
 session_start();
 
@@ -39,7 +41,7 @@ if(isset($_POST['btnsaveorder'])) {
 
    $arr_pid     = $_POST['pid_arr'];
    $arr_barcode   = $_POST['barcode_arr'];
-   $arr_name   = $_POST['pid_arr'];
+   $arr_name   = $_POST['product_arr'];
    $arr_stock   = $_POST['stock_c_arr'];
    $arr_qty     = $_POST['quantity_arr'];
    $arr_price   = $_POST['price_c_arr']; 
@@ -83,8 +85,7 @@ for($i=0;$i<count($arr_pid);$i++){
 
   }
 
-  $insert=$pdo->prepare("insert into tbl_invoice_details (invoice_id,barcode,product_id,product_name,qty,rate,saleprice,order_date) 
-  values(:invid,:barcode,:pid,:name,:qty,:rate,:saleprice,:order_date)");
+  $insert=$pdo->prepare("insert into tbl_invoice_details (invoice_id,barcode,product_id,product_name,qty,rate,saleprice,order_date) values(:invid,:barcode,:pid,:name,:qty,:rate,:saleprice,:order_date)");
 
   $insert->bindParam(':invid', $invoice_id);
   $insert->bindParam(':barcode',$arr_barcode[$i]);
@@ -116,11 +117,13 @@ header('location:orderlist.php');
 }
 
 
-
+ob_end_flush();
 
 $select=$pdo->prepare("select * from tbl_taxdis where taxdis_id =1");
 $select->execute();
 $row=$select->fetch(PDO::FETCH_OBJ);
+
+
 
 ?>
 
@@ -473,7 +476,6 @@ include_once "footer.php";
 
           '<td style="text-align:left; vertical-align:middle; font-size:17px;"><class="form-control product_c" name="pid_arr[]" <span class="badge badge-dark">' + Product + '</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="' + pID + '"><input type="hidden" class="form-control product" name="product_arr[]" value="' + Product + '"> </td>' +
 
-
           '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+pID+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+pID+'" value="'+Stock+'"></td>'+
 
           '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-warning price" name="price_arr[]" id="price_id'+pID+'">'+ProductPrice+'</span><input type="hidden" class="form-control price_c" name="price_c_arr[]" id="price_idd'+pID+'" value="'+ProductPrice+'"></td>'+
@@ -709,4 +711,3 @@ $(document).on('click', '.btnremove', function() {
 
     
 </script>
-
