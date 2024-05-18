@@ -267,7 +267,7 @@ th {background: #eee;}
                   <div class="input-group-prepend">
                     <span class="input-group-text">SUBTOTAL: </span>
                   </div>
-                  <input type="text" class="form-control" value="<?Php echo $subtotal;?>" name="txtsubtotal" id="txtsubtotal_id" readonly>
+                  <input type="text" class="form-control" value="<?php echo $subtotal;?>" name="txtsubtotal" id="txtsubtotal_id" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -351,7 +351,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">TOTAL(₱):</span>
                   </div>
-                  <input type="text" class="form-control form-control-lg total"  name="txttotal" value="<?Php echo $total;?>"  id="txttotal" readonly>
+                  <input type="text" class="form-control form-control-lg total"  name="txttotal" value="<?php echo $total;?>"  id="txttotal" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -385,7 +385,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">DUE(₱)</span>
                   </div>
-                  <input type="text" class="form-control" name="txtdue" value="<?Php echo $due;?>"  id="txtdue" readonly>
+                  <input type="text" class="form-control" name="txtdue" value="<?php echo $due;?>"  id="txtdue" readonly>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -398,7 +398,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">PAID(₱): </span>
                   </div>
-                  <input type="text" class="form-control" name="txtpaid" value="<?Php echo $paid;?>"  id="txtpaid">
+                  <input type="text" class="form-control" name="txtpaid" value="<?php echo $paid;?>"  id="txtpaid">
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -446,7 +446,86 @@ include_once "footer.php";
       theme: 'bootstrap4'
     })
 
+
     var productarr=[];
+    
+    $.ajax({
+    url: "getorderproduct.php",
+    method: "get",
+    dataType: "json",
+    data: {id:<?php  echo $_GET['id']  ?>},
+    success: function(data){
+
+      // alert("pID");
+
+      // console.log(data);
+
+      $.each(data,function(key, data){
+      if(jQuery.inArray(data["product_id"],productarr)!== -1){
+
+      var actualqty = parseInt($('#qty_id'+data["product_id"]).val())+1;
+      $('#qty_id'+data["pID"].val(actualqty));
+
+
+      //check saleprice if the code is not working (edrian)
+      var saleprice = parseInt(actualqty)*data["saleprice"];
+
+      $('#saleprice_id'+data["product_id"]).html(saleprice);
+      $('#saleprice_idd'+data["product_id"]).val(saleprice);
+
+      //$("#txtbarcode_id").val("");
+
+      calculate(0,0);
+
+}else{
+
+       //revised version
+
+       addrow(data["product_id"], data["product_name"], data["qty"], data["rate"], data["ProductPrice"], data["Stock"], data["Barcode"]);
+
+        productarr.push(data["product_id"]);
+
+        //$("#txtbarcode_id").val("");
+
+        function addrow(product_id, product_name, qty, rate, ProductPrice, Stock, Barcode){
+          
+
+          var tr='<tr>'+
+
+          '<input type="hidden" class="form-control barcode" name="barcode_arr[]" id="barcode_id'+Barcode+'" value="'+Barcode+'">'+
+
+          '<td style="text-align:left; vertical-align:middle; font-size:17px;"><class="form-control product_c" name="pid_arr[]" <span class="badge badge-dark">' + product_name + '</span><input type="hidden" class="form-control pid" name="pid_arr[]" value="' + product_id + '"><input type="hidden" class="form-control product" name="product_arr[]" value="' + product_name + '"> </td>' +
+
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-primary stocklbl" name="stock_arr[]" id="stock_id'+product_id+'">'+Stock+'</span><input type="hidden" class="form-control stock_c" name="stock_c_arr[]" id="stock_idd'+product_id+'" value="'+Stock+'"></td>'+
+
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-warning price" name="price_arr[]" id="price_id'+product_id+'">'+ProductPrice+'</span><input type="hidden" class="form-control price_c" name="price_c_arr[]" id="price_idd'+product_id+'" value="'+ProductPrice+'"></td>'+
+
+          '<td><input type="text" class="form-control qty" name="quantity_arr[]" id="qty_id'+product_id+'" value="'+qty+'" size="1"></td>'+
+
+          '<td style="text-align: left; vertical-align: middle; font-size: 17px;"><span class="badge badge-success totalamt" name="netamt_arr[]" id="saleprice_id'+product_id+'">'+rate*qty+'</span><input type="hidden" class="form-control saleprice" name="saleprice_arr[]" id="saleprice_idd'+product_id+'" value="'+rate*qty+'"></td>'+
+
+
+          //remove button
+          '<td><center><button type="button" name="remove" class="btn btn-danger btn-sm btnremove" data-id="'+product_id+'"><span class="fas fa-trash"></span></center></td>'
+         
+          '</tr>';
+
+          $('.details').append(tr);
+
+          calculate(0,0);
+
+}//end f function addrow
+
+}});
+
+$("#txtbarcode_id").val("");
+
+} //end pf success function
+
+}) //end of ajax request
+
+
+
 
     $(function(){
 
