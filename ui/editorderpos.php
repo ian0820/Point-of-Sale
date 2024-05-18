@@ -50,52 +50,77 @@ $select->execute();
 $row_invoice_details=$select->fetchAll(PDO::FETCH_ASSOC);
 
 
-if(isset($_POST['btnsaveorder'])) {
+if(isset($_POST['btnupdateorder'])) {
 
-  $orderdate = date('Y-m-d')  ;
-  $subtotal = $_POST['txtsubtotal'];
-  $discount = $_POST['txtdiscount'];
-  $sgst     = $_POST['txtsgst'];
-  $cgst =     $_POST['txtcgst'];
-  $total = $_POST['txttotal'];
-  $payment_type = $_POST['rb'];
-  $due = $_POST['txtdue'];
-  $paid = $_POST['txtpaid'];
+//newcode for update button 
 
-
-   $arr_pid     = $_POST['pid_arr'];
-   $arr_barcode   = $_POST['barcode_arr'];
-   $arr_name   = $_POST['product_arr'];
-   $arr_stock   = $_POST['stock_c_arr'];
-   $arr_qty     = $_POST['quantity_arr'];
-   $arr_price   = $_POST['price_c_arr']; 
-   $arr_total    = $_POST['saleprice_arr'];
+//1st step
+$txt_orderdate = date('Y-m-d');
+$txt_subtotal = $_POST['txtsubtotal'];
+$txt_discount = $_POST['txtdiscount'];
+$txt_sgst     = $_POST['txtsgst'];
+$txt_cgst =     $_POST['txtcgst'];
+$txt_total = $_POST['txttotal'];
+$txt_payment_type = $_POST['rb'];
+$txt_due = $_POST['txtdue'];
+$txt_paid = $_POST['txtpaid'];
 
 
+$arr_pid     = $_POST['pid_arr'];
+$arr_barcode   = $_POST['barcode_arr'];
+$arr_name   = $_POST['product_arr'];
+$arr_stock   = $_POST['stock_c_arr'];
+$arr_qty     = $_POST['quantity_arr'];
+$arr_price   = $_POST['price_c_arr']; 
+$arr_total    = $_POST['saleprice_arr'];
 
 
-$insert = $pdo->prepare("insert into tbl_invoice(order_date,subtotal,discount,sgst,cgst,total,payment_type,due,paid) value(:orderdate,:subtotal,:discount,:sgst,:cgst,:total,:payment_type,:due,:paid)");
+ //2nd step
+foreach($row_invoice_details as $product_invoice_details){
+
+  $updateproduct_stock=$pdo->prepare("update tbl_product set Stock=Stock+".$product_invoice_details['qty']." where pID='".$product_invoice_details['product_id']."'");
+  $updateproduct_stock->execute();
+
+}
 
 
-$insert->bindParam(':orderdate', $orderdate);
-$insert->bindParam(':subtotal', $subtotal);
-$insert->bindParam(':discount', $discount);
-$insert->bindParam(':sgst', $sgst);
-$insert->bindParam(':cgst', $cgst);
-$insert->bindParam(':total', $total);
-$insert->bindParam(':payment_type', $payment_type);
-$insert->bindParam(':due', $due);
-$insert->bindParam(':paid', $paid);
+//3rd step
+$delete_invoice_details=$pdo->prepare("delete from tbl_invoice_details where invoice_id = $id");
+$delete_invoice_details->execute();
 
-$insert->execute();
+
+
+//4th step
+$update_tbl_invoice = $pdo->prepare("update tbl_invoice SET order_date=:orderdate, subtotal=:subtotal, discount=:discount, sgst=:sgst, cgst=:cgst, total=:total, payment_type=:payment_type, due=:due, paid=:paid where invoice_id=$id");
+
+
+$update_tbl_invoice->bindParam(':orderdate', $txt_orderdate);
+$update_tbl_invoice->bindParam(':subtotal', $txt_subtotal);
+$update_tbl_invoice->bindParam(':discount', $txt_discount);
+$update_tbl_invoice->bindParam(':sgst', $txt_sgst);
+$update_tbl_invoice->bindParam(':cgst', $txt_cgst);
+$update_tbl_invoice->bindParam(':total', $txt_total);
+$update_tbl_invoice->bindParam(':payment_type', $txt_payment_type);
+$update_tbl_invoice->bindParam(':due', $txt_due);
+$update_tbl_invoice->bindParam(':paid', $txt_paid);
+
+$update_tbl_invoice->execute();
 
 $invoice_id=$pdo->lastInsertId();
 
 if($invoice_id!=null){
 
+//5th step
 for($i=0;$i<count($arr_pid);$i++){
 
-  $rem_qty=$arr_stock[$i]-$arr_qty[$i];
+  $selectpdt=$pdo->prepare("select * from tbl_product where pID='".$arr_pid[$i]."'");
+  $selectpdt->execute();
+
+while($rowpdt=$selectpdt->fetch(PDO::FETCH_OBJ)){
+
+  $db_stock[$i]=$rowpdt->Stock;
+
+  $rem_qty= $db_stock[$i]-$arr_qty[$i];
 
   if($rem_qty<0){
 
@@ -103,22 +128,27 @@ for($i=0;$i<count($arr_pid);$i++){
     
   }else{
 
+    //6th step
     $update=$pdo->prepare("update tbl_product SET  Stock='$rem_qty' where pID='".$arr_pid[$i]."'");
     $update->execute();
 
 
   }
 
+}  
+
+
+  //7th step
   $insert=$pdo->prepare("insert into tbl_invoice_details (invoice_id,barcode,product_id,product_name,qty,rate,saleprice,order_date) values(:invid,:barcode,:pid,:name,:qty,:rate,:saleprice,:order_date)");
 
-  $insert->bindParam(':invid', $invoice_id);
+  $insert->bindParam(':invid', $id);
   $insert->bindParam(':barcode',$arr_barcode[$i]);
   $insert->bindParam(':pid',$arr_pid[$i]);
   $insert->bindParam(':name',$arr_name[$i]);
   $insert->bindParam(':qty',$arr_qty[$i]);
   $insert->bindParam(':rate',$arr_price[$i]);
   $insert->bindParam(':saleprice',$arr_total[$i]);
-  $insert->bindParam(':order_date', $orderdate);
+  $insert->bindParam(':order_date', $txt_orderdate);
 
 
 if(!$insert->execute()){
@@ -361,19 +391,19 @@ th {background: #eee;}
 
                 <div class="form-group clearfix">
                       <div class="icheck-success d-inline">
-                        <input type="radio" name="rb" value="Cash" checked id="radioSuccess1">
+                        <input type="radio" name="rb" value="Cash" id="radioSuccess1" value="Cash" <?php echo ($payment_type=='Cash')?'checked':'' ?>>
                         <label for="radioSuccess1">
                           CASH
                         </label>
                       </div>
                       <div class="icheck-primary d-inline">
-                        <input type="radio" name="rb" value="Card" id="radioSuccess2">
+                        <input type="radio" name="rb" value="Card" <?php echo ($payment_type=='Card')?'checked':'' ?> >
                         <label for="radioSuccess2">
                           CARD
                         </label>
                       </div>
                       <div class="icheck-danger d-inline">
-                        <input type="radio" name="rb" value="Check" id="radioSuccess3">
+                        <input type="radio" name="rb" value="Check" <?php echo ($payment_type=='Check')?'checked':'' ?> id="radioSuccess3">
                         <label for="radioSuccess3">
                           CHECK
                         </label>
@@ -398,7 +428,7 @@ th {background: #eee;}
                 <div class="input-group-prepend">
                     <span class="input-group-text">PAID(₱): </span>
                   </div>
-                  <input type="text" class="form-control" name="txtpaid" value="<?php echo $paid;?>"  id="txtpaid">
+                  <input type="text" class="form-control" name="txtpaid" value="<?php echo $paid;?>"  id="txtpaid" required>
                   <div class="input-group-append">
                     <span class="input-group-text">₱</span>
                   </div>
@@ -560,6 +590,9 @@ $("#txtbarcode_id").val("");
 
       calculate(0,0);
 
+      $("#txtpaid").val("");
+      $("#txtdue").val("");
+
 }else{
 
        //revised version
@@ -596,6 +629,9 @@ $("#txtbarcode_id").val("");
           $('.details').append(tr);
 
           calculate(0,0);
+
+          $("#txtpaid").val("");
+          $("#txtdue").val("");
 
 }//end f function addrow
 
@@ -650,6 +686,9 @@ $(function(){
 
         calculate(0,0);
 
+        $("#txtpaid").val("");
+        $("#txtdue").val("");
+
       }else{
 
                //revised version
@@ -690,6 +729,9 @@ $(function(){
 
                   calculate(0,0);
 
+                  $("#txtpaid").val("");
+                  $("#txtdue").val("");
+
 }//end f function addrow
 
 }
@@ -721,6 +763,9 @@ quantity.val(1);
 
   calculate(0,0);
 
+  $("#txtpaid").val("");
+  $("#txtdue").val("");
+
 }else{
 
   tr.find(".totalamt").text(quantity.val() * tr.find(".price").text());
@@ -728,6 +773,9 @@ quantity.val(1);
   tr.find(".saleprice").val(quantity.val() * tr.find(".price").text());
 
   calculate(0,0);
+
+  $("#txtpaid").val("");
+  $("#txtdue").val("");
 
 }
 
@@ -779,7 +827,10 @@ function calculate(dis,paid) {
 
     $("#txttotal").val(total.toFixed(2));
 
-    $("#txtdue").val(due.toFixed(2));
+    paid_db = parseFloat($("#txtpaid").val());
+    due_db = paid_db - total;
+
+    $("#txtdue").val(due_db.toFixed(2));
 
 }//end calculate function
 
@@ -802,12 +853,21 @@ $("#txtpaid").keyup(function() {
 
 $(document).on('click', '.btnremove', function() {
     var removed = $(this).attr("data-id");
-    $(this).closest('tr').remove();
+    
     productarr = jQuery.grep(productarr, function(value) {
         return value != removed;
+
+        calculate(0, 0);
+
+        $("#txtpaid").val("");
+        $("#txtdue").val("");
+
     });
 
+    $(this).closest('tr').remove();
     calculate(0, 0);
+    $("#txtpaid").val("");
+    $("#txtdue").val("");
 
 });
     
