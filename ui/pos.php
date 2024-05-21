@@ -486,7 +486,7 @@ include_once "footer.php";
 
 
           //remove button
-          '<td><center><button type="button" name="remove" class="btn btn-danger btn-sm btnremove" data-id="'+pID+'"><span class="fas fa-trash"></span></center></td>'
+          '<td><center><button type="button" name="remove" class="btn btn-danger btn-sm btnremove" data-id="'+pID+'"><span class="fas fa-trash"></span></center></td>'+
 
           '</tr>';
 
@@ -579,7 +579,7 @@ $(function(){
                   //old remove button (old remove button in barcode was removed)
                   // '<td style="text-align: left; vertical-align: middle;"><center><name="remove" class="btnremove" data-id="'+pID+'"><span class="fas fa-trash" style="color:red"></span></center></td>'+
 
-                  '<td><center><button type="button" name="remove" class="btn btn-danger btn-sm btnremove" data-id="'+pID+'"><span class="fas fa-trash"></span></center></td>'
+                  '<td><center><button type="button" name="remove" class="btn btn-danger btn-sm btnremove" data-id="'+pID+'"><span class="fas fa-trash"></span></center></td>'+
 
                   '</tr>';
 
