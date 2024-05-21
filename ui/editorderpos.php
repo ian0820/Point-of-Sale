@@ -141,7 +141,7 @@ while($rowpdt=$selectpdt->fetch(PDO::FETCH_OBJ)){
   //7th step
   $insert=$pdo->prepare("insert into tbl_invoice_details (invoice_id,barcode,product_id,product_name,qty,rate,saleprice,order_date) values(:invid,:barcode,:pid,:name,:qty,:rate,:saleprice,:order_date)");
 
-  $insert->bindParam(':invid', $id);
+  $insert->bindParam(':invid', $invoice_id);
   $insert->bindParam(':barcode',$arr_barcode[$i]);
   $insert->bindParam(':pid',$arr_pid[$i]);
   $insert->bindParam(':name',$arr_name[$i]);
